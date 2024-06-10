@@ -36,3 +36,20 @@ class CrudController:
 
     def get_all_courses(self):
         return self.userDB.all()
+    
+    def get_course_by_id(self, id: str):
+        courseQ = Query()
+        course_info = self.userDB.get(courseQ.course_id == id)
+        print(self.userDB.all())
+        if course_info is not None:
+            path = Path(course_info['path'])
+            if not path.exists():
+                raise LookupError("The course doesn't exist")
+            course_info_path = path / '.desk' / 'info.json'
+            course_db = TinyDB(course_info_path)
+            course_json = jsonable_encoder(course_db.all())
+            return course_json
+        else:
+            return {
+                'error' : "couldn't find the course"
+            }

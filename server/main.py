@@ -24,3 +24,7 @@ def add_course(path: str):
 @app.get('/course')
 def get_all_courses():
     return course_controller.get_all_courses()
+
+@app.get('/course/:id')
+def get_course_by_id(id: str):
+    return course_controller.get_course_by_id(id)
