@@ -1,10 +1,9 @@
 from pydantic import BaseModel
 from typing import List
-from app.model.lesson import Lesson
-import uuid
+from ..schemas.lesson import Lesson
 
 class Course(BaseModel):
-    id: str = uuid.uuid1().int
+    id: str
     path: str
-    videos: List[Lesson]
+    lessons: List[Lesson]
     last_lesson_played: Lesson
