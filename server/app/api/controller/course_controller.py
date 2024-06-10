@@ -10,6 +10,9 @@ class CourseController:
     file_controller: FileController = FileController()
     crud_controller: CrudController = CrudController()
 
+    def get_all_courses(self):
+        return self.crud_controller.get_all_courses()
+
     def add_course(self,path: str) -> Course:
         lessons_path = self.file_controller.get_all_files(path)
         lessons: List[Lesson] = []

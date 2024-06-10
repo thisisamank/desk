@@ -29,3 +29,10 @@ class CrudController:
         course_db = TinyDB(course_db_path)
         course_json = jsonable_encoder(course)
         course_db.insert(course_json)
+        self.userDB.insert({
+            'course_id': course.id,
+            'path': course.path
+        })
+
+    def get_all_courses(self):
+        return self.userDB.all()

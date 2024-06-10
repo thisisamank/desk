@@ -20,3 +20,7 @@ def add_course(path: str):
     course_json = jsonable_encoder(course)
     return JSONResponse(content=course_json)
 
+
+@app.get('/course')
+def get_all_courses():
+    return course_controller.get_all_courses()
