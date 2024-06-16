@@ -22,7 +22,7 @@ const Card = ({name , author} : CardProps) => {
  }
 
   return (
-    <div className='w-fit h-fit py-4 px-3 border-[#E2E8F0] border-2 rounded-lg border-b-4'>
+    <div className='w-fit h-fit py-4 px-3 border-[#E2E8F0] border-2 rounded-lg border-b-4 cursor-pointer'>
       <div className='flex space-x-2'>
         <h1 className='text-[#64748B] text-sm max-w-60'>
           {exceedWords(name, 40)}
