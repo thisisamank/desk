@@ -52,6 +52,7 @@ class CrudController:
             'author': course.author,
         })
         deskLogger.info(f"Course added with id {course.id}")
+        return course
 
     def get_all_courses(self):
         deskLogger.info("Getting all courses")
