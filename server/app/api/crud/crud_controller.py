@@ -28,6 +28,11 @@ class CrudController:
         
 
     def add_course(self,course_path: str, course: Course):
+        course.lessons.sort(key = lambda lesson: lesson.name)
+        if(self.exists(course_path)):
+            return {
+                'message': 'Course Already Exists!'
+            }
         path = Path(course_path)
         course_db_path = self.__create_desk_path__(path)
         course_db = TinyDB(course_db_path)
@@ -38,6 +43,7 @@ class CrudController:
             'path': course.path
         })
         deskLogger.info(f"Course added with id {course.id}")
+        return course
 
     def get_all_courses(self):
         deskLogger.info("Getting all courses")
@@ -60,7 +66,11 @@ class CrudController:
             return {
                 'error' : "couldn't find the course"
             }
-    
+    def exists(self,course_path: str) -> bool :
+        courseQ = Query()
+        return len(self.userDB.search(courseQ.path == course_path)) > 0
+
+
     def delete_course_by_id(self, id: str):
         courseQ = Query()
         course_info = self.userDB.get(courseQ.course_id == id)
