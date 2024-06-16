@@ -1,6 +1,7 @@
 from tinydb import TinyDB, Query
 from pathlib import Path
 from ...schemas.course import Course
+from ...schemas.lesson import Lesson
 from fastapi.encoders import jsonable_encoder
 from app.logger import deskLogger
 
@@ -28,6 +29,12 @@ class CrudController:
         
 
     def add_course(self,course_path: str, course: Course):
+        course.lessons.sort(key = lambda lesson: lesson.name)
+        if(self.exists(course_path)):
+            deskLogger.error(f"Course with id {id} already exist!")
+            return {
+                'message': 'Course Already Exists!'
+            }
         path = Path(course_path)
         course_db_path = self.__create_desk_path__(path)
         course_db = TinyDB(course_db_path)
@@ -38,6 +45,7 @@ class CrudController:
             'path': course.path
         })
         deskLogger.info(f"Course added with id {course.id}")
+        return course
 
     def get_all_courses(self):
         deskLogger.info("Getting all courses")
@@ -60,7 +68,12 @@ class CrudController:
             return {
                 'error' : "couldn't find the course"
             }
-    
+        
+    def exists(self,course_path: str) -> bool :
+        courseQ = Query()
+        return len(self.userDB.search(courseQ.path == course_path)) > 0
+
+
     def delete_course_by_id(self, id: str):
         courseQ = Query()
         course_info = self.userDB.get(courseQ.course_id == id)
@@ -81,3 +94,22 @@ class CrudController:
             return {
                 'error' : "couldn't find the course"
             }
+    
+    def update_course(self, id:str, name: str | None, last_lesson_id: str | None):
+        courseQ = Query()
+        course_info = self.userDB.get(courseQ.course_id == id)
+        if course_info is not None:
+            if name is not None:
+                course_info.name = name
+            if last_lesson_id is not None:
+                path = Path(course_info['path'])
+                course_info_path = path / '.desk' / 'info.json'
+                course_db = TinyDB(course_info_path)
+                last_lesson = course_db.get(Query().id == last_lesson_id)
+                course_info.last_lesson_played = last_lesson
+            self.userDB.update(course_info, courseQ.course_id == id)
+            deskLogger.info(f"Course updated with id {id}")
+            return {
+                'message': f'Course updated successfully with id {id}'
+            }
+
