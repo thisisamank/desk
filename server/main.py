@@ -41,3 +41,7 @@ def get_course_by_id(id: str):
 @app.delete('/course/:id')
 def delete_course(id: str):
     return course_controller.delete_course(id)
+
+@app.put('/course/:id')
+def update_course(id: str, name: str = None, last_lesson_id: str = None):
+    return course_controller.update_course(id, name, last_lesson_id)

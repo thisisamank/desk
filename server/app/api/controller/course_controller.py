@@ -29,3 +29,6 @@ class CourseController:
 
     def delete_course(self, id: str):
         return self.crud_controller.delete_course_by_id(id)
+    
+    def update_course(self, id:str, name: str | None, last_lesson_id: str | None):
+        return self.crud_controller.update_course(id, name, last_lesson_id)
