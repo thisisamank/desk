@@ -17,11 +17,13 @@ class CourseController:
         return self.crud_controller.get_course_by_id(id)
 
     def add_course(self,path: str) -> Course:
+        course_name = path.split('/')[-1]
         lessons_path = self.file_controller.get_all_files(path)
         lessons: List[Lesson] = []
         for file in lessons_path:
-            lesson = Lesson(path=str(file), id=generate_short_id())
+            lesson_name = file.name
+            lesson = Lesson(path=str(file), id=generate_short_id(), name=lesson_name)
             lessons.append(lesson)
-        course = Course(id=generate_short_id(), path=path, lessons=lessons,last_lesson_played=lessons[0])
+        course = Course(id=generate_short_id(), path=path, lessons=lessons,last_lesson_played=lessons[0], name=course_name, author="admin")
         self.crud_controller.add_course(path, course)
         return course

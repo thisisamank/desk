@@ -7,3 +7,5 @@ class Course(BaseModel):
     path: str
     lessons: List[Lesson]
     last_lesson_played: Lesson
+    name: str
+    author: str
