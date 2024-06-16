@@ -33,7 +33,6 @@ def add_course(path: str):
 
 @app.get('/course')
 def get_all_courses():
-    logger.info("Getting all courses")
     return course_controller.get_all_courses()
 
 @app.get('/course/:id')
