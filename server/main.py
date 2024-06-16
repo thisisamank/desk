@@ -27,7 +27,6 @@ def ping():
 def add_course(path: str):
     course = course_controller.add_course(path)
     course_json = jsonable_encoder(course)
-    logger.info(f"Course added: {course_json}")
     return JSONResponse(content=course_json)
 
 
