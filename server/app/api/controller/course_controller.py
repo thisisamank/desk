@@ -16,7 +16,7 @@ class CourseController:
     def get_course_by_id(self, id: str):
         return self.crud_controller.get_course_by_id(id)
 
-    def add_course(self,path: str) -> Course:
+    def add_course(self,path: str):
         course_name = path.split('/')[-1]
         lessons_path = self.file_controller.get_all_files(path)
         lessons: List[Lesson] = []
