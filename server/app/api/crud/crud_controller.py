@@ -60,3 +60,24 @@ class CrudController:
             return {
                 'error' : "couldn't find the course"
             }
+    
+    def delete_course_by_id(self, id: str):
+        courseQ = Query()
+        course_info = self.userDB.get(courseQ.course_id == id)
+        if course_info is not None:
+            path = Path(course_info['path'])
+            if not path.exists():
+                deskLogger.error(f"Couldn't find the course at {path} for course id {id}")
+            course_info_path = path / '.desk' / 'info.json'
+            course_db = TinyDB(course_info_path)
+            course_db.truncate()
+            self.userDB.remove(courseQ.course_id == id)
+            deskLogger.info(f"Course deleted with id {id}")
+            return {
+                'message': f'Course deleted successfully with id {id}'
+            }
+        else:
+            deskLogger.error(f"Couldn't find the course with id {id}")
+            return {
+                'error' : "couldn't find the course"
+            }

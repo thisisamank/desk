@@ -27,3 +27,6 @@ class CourseController:
         course = Course(id=generate_short_id(), path=path, lessons=lessons,last_lesson_played=lessons[0], name=course_name, author="admin")
         self.crud_controller.add_course(path, course)
         return course
+
+    def delete_course(self, id: str):
+        return self.crud_controller.delete_course_by_id(id)

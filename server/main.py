@@ -38,3 +38,7 @@ def get_all_courses():
 @app.get('/course/:id')
 def get_course_by_id(id: str):
     return course_controller.get_course_by_id(id)
+
+@app.delete('/course/:id')
+def delete_course(id: str):
+    return course_controller.delete_course(id)
