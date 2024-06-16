@@ -2,6 +2,7 @@ from tinydb import TinyDB, Query
 from pathlib import Path
 from ...schemas.course import Course
 from fastapi.encoders import jsonable_encoder
+from app.logger import deskLogger
 
 class CrudController:
 
@@ -20,6 +21,9 @@ class CrudController:
         if not desk_db_path.exists():
             desk_dir.mkdir()
             desk_db_path.touch()
+            deskLogger.info(f"Desk path created at {desk_db_path}")
+        else:
+            deskLogger.info(f"Desk path found at {desk_db_path}")
         return desk_db_path
         
 
@@ -33,23 +37,26 @@ class CrudController:
             'course_id': course.id,
             'path': course.path
         })
+        deskLogger.info(f"Course added with id {course.id}")
 
     def get_all_courses(self):
+        deskLogger.info("Getting all courses")
         return self.userDB.all()
     
     def get_course_by_id(self, id: str):
         courseQ = Query()
         course_info = self.userDB.get(courseQ.course_id == id)
-        print(self.userDB.all())
         if course_info is not None:
             path = Path(course_info['path'])
             if not path.exists():
-                raise LookupError("The course doesn't exist")
+                deskLogger.error(f"Couldn't find the course at {path} for course id {id}")
             course_info_path = path / '.desk' / 'info.json'
             course_db = TinyDB(course_info_path)
             course_json = jsonable_encoder(course_db.all())
+            deskLogger.info(f"Course found with id {id}")
             return course_json
         else:
+            deskLogger.error(f"Couldn't find the course with id {id}")
             return {
                 'error' : "couldn't find the course"
             }

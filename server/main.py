@@ -27,13 +27,13 @@ def ping():
 def add_course(path: str):
     course = course_controller.add_course(path)
     course_json = jsonable_encoder(course)
-    logger.info(msg=f"Course added: {course_json}")
+    logger.info(f"Course added: {course_json}")
     return JSONResponse(content=course_json)
 
 
 @app.get('/course')
 def get_all_courses():
-    logger.info(msg="Getting all courses")
+    logger.info("Getting all courses")
     return course_controller.get_all_courses()
 
 @app.get('/course/:id')
