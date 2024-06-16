@@ -11,7 +11,6 @@ class CourseController:
     crud_controller: CrudController = CrudController()
 
     def get_all_courses(self):
-        raise Exception("Not implemented")
         return self.crud_controller.get_all_courses()
 
     def get_course_by_id(self, id: str):
