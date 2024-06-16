@@ -80,7 +80,7 @@ const parseAndAddLessons = (courseData: any) => {
     if (path.endsWith('.pdf')) return LessonType.PDF;
     if (path.endsWith('.txt')) return LessonType.TEXT;
     if (path.endsWith('.html')) return LessonType.HTML;
-    if (path.startsWith('http')) return LessonType.URL;
+    if (path.endsWith('url')) return LessonType.URL;
     return LessonType.UNKNOWN;
   };
   
