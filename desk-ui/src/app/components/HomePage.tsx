@@ -19,38 +19,43 @@ const HomePage = () => {
     const [search, setSearch] = useState('');
     const [courses, setCourses] = useState<Course>();
 
-    const handleFolderClick = () => {
-        const folderSelector = document.getElementById('folderSelector') as HTMLInputElement;
-        if (folderSelector) {
-            folderSelector.click();
-        }
-    };
+    // const handleFolderClick = () => {
+    //     const folderSelector = document.getElementById('folderSelector') as HTMLInputElement;
+    //     if (folderSelector) {
+    //         folderSelector.click();
+    //     }
+    // };
 
-    const handleFolderChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files && files.length) {
-            const folderPath = files[0].webkitRelativePath.split('/')[0];
-            console.log('Selected folder path:', folderPath);
+    // const handleFolderChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const files = e.target.files;
+    //     if (files && files.length) {
+    //         const folderPath = files[0].webkitRelativePath.split('/')[0];
+    //         console.log('Selected folder path:', folderPath);
 
             
-            const formData = new FormData();
-            for (let i = 0; i < files.length; i++) {
-                formData.append('files', files[i]);
-            }
+    //         const formData = new FormData();
+    //         for (let i = 0; i < files.length; i++) {
+    //             formData.append('files', files[i]);
+    //         }
 
-            try {
-                const uploadCourse = await fetch(`${BASE_URL}/course`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await uploadCourse.json();
-                setCourses(data);
-            } catch (error) {
-                console.error('Error uploading folder:', error);
-            }
-        }
+    //         try {
+    //             const uploadCourse = await fetch(`${BASE_URL}/course`, {
+    //                 method: 'POST',
+    //                 body: formData
+    //             });
+    //             const data = await uploadCourse.json();
+    //             setCourses(data);
+    //         } catch (error) {
+    //             console.error('Error uploading folder:', error);
+    //         }
+    //     }
+    // };
+
+    const handleFolderClick = async () => {
+        //@ts-ignore
+        const dirHandle = await window.showDirectoryPicker({ startIn: 'downloads' });
+        console.log(dirHandle);
     };
-
     return (
         <div className='w-screen'>
             <SearchBar search={search} setSearch={setSearch} />
@@ -58,7 +63,7 @@ const HomePage = () => {
                 <div className='py-3 px-5 space-x-2 bg-[#F8FAFC] rounded-full container-center w-auto cursor-pointer' onClick={handleFolderClick}>
                     <Image src={folder} alt='folder-logo' />
                     <h1 className='font-semibold text-[#475569] text-sm'>Add a course</h1>
-                    <input
+                    {/* <input
                         type="file"
                         id="folderSelector"
                         style={{ display: "none" }}
@@ -66,7 +71,8 @@ const HomePage = () => {
                         directory="true"
                         onChange={handleFolderChange}
                         {...({ webkitdirectory: "true", directory: "true" } as ExtendedInputProps)}
-                    />
+                    /> */}
+                    <button onClick={handleFolderClick}>Upload</button>
                 </div>
             </div>
             {mockData?.length > 0 && (
