@@ -29,7 +29,7 @@ class CourseMap {
     private folderMap = new Map<string, Lesson[]>();
   
     add(lesson: Lesson) {
-      let folders = lesson.path.split('/');
+      const folders = lesson.path.split('/');
       let folder = '';
       for (let i = 0; i < folders.length; i++) {
         if (i === 0) {
@@ -38,7 +38,7 @@ class CourseMap {
             this.folderMap.set(folder, []);
           }
         } else {
-          let subFolders = this.folderMap.get(folder);
+          const subFolders = this.folderMap.get(folder);
           if (subFolders != null) {
             if (!subFolders.includes(lesson)) {
               subFolders.push(lesson);

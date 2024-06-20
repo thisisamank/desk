@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import SearchBar from './SearchBar';
-import folder from '@/../public/assets/folder-logo.svg';
-import video from '@/../public/assets/videos-logo.svg';
 import Card from './Card';
-import { mockData } from '../utils/mockData';
-import { BASE_URL } from '../constants/api';
-import { Course } from '../utils/FolderMap';
+import { mockData } from '../../utils/mockData';
+import { BASE_URL } from '../../constants/api';
+import { Course } from '../../utils/FolderMap';
+import electron, { nativeImage } from 'electron'
 
 interface ExtendedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     webkitdirectory?: string;
@@ -51,12 +49,17 @@ const HomePage = () => {
         }
     };
 
+    // const handleFolderClick = async () => {
+    //     //@ts-ignore
+    //     const dirHandle = await window.showDirectoryPicker({ startIn: 'downloads' });
+    //     console.log(dirHandle);
+    // };
     return (
         <div className='w-screen'>
             <SearchBar search={search} setSearch={setSearch} />
             <div className='container-center w-screen pt-3'>
                 <div className='py-3 px-5 space-x-2 bg-[#F8FAFC] rounded-full container-center w-auto cursor-pointer' onClick={handleFolderClick}>
-                    <Image src={folder} alt='folder-logo' />
+                    <img src={"../assets/folder-logo.svg"} alt='folder-logo' />
                     <h1 className='font-semibold text-[#475569] text-sm'>Add a course</h1>
                     <input
                         type="file"
@@ -76,7 +79,7 @@ const HomePage = () => {
                             Added Courses
                         </h1>
                         <div className='space-x-2 flex'>
-                            <Image src={video} alt='video-logo' />
+                            <img src={"../assets/videos-logo.svg"} alt='video-logo' />
                             <h1 className='font-medium text-[#475569] text-sm'>Played last time</h1>
                         </div>
                         <div className='w-full grid grid-cols-3 pt-5 h-full place-content-between gap-5'>

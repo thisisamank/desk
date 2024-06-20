@@ -1,13 +1,7 @@
-"use client"
+import { useState } from "react";
+import {exceedWords} from "../../utils/helper";
 
-import React from 'react'
-import { useState } from 'react';
-import { mockData } from '../utils/mockData'
-import Image from 'next/image';
-import dotLogo from '@/../public/assets/dot-grid-logo.svg'
-import { exceedWords } from '../utils/helper';
-import trashCan from '@/../public/assets/trash-can-simple-logo.svg'
-import pinLogo from '@/../public/assets/pin-logo.svg'
+
 
 interface CardProps {
     name: string;
@@ -28,16 +22,16 @@ const Card = ({name , author} : CardProps) => {
           {exceedWords(name, 40)}
         </h1>
         <div className='relative'>
-     <Image src={dotLogo} alt='dotLogo' className='cursor-pointer' onClick={handleGridClick} />
+     <img src={"../assets/dot-grid-logo.svg"} alt='dotLogo' className='cursor-pointer' onClick={handleGridClick} />
      {isGridOpen && (
   <div className='absolute bg-white border-[#E2E8F0] border-2 rounded-lg w-36 h-fit top-4 -left-16 z-10'>
     <ul className='space-y-2 py-2'>
       <li className='flex items-center px-3 space-x-3'>
-        <Image src={pinLogo} alt='pin-logo' />
+        <img src={"../assets/pin-logo.svg"} alt='pin-logo' />
         <span className='text-[#64748B] text-sm font-medium'>Pin Course</span>
       </li>
       <li className='flex items-center px-3 space-x-3'>
-        <Image src={trashCan} alt='pin-logo' />
+        <img src={"../assets/trash-can-simple-logo.svg"} alt='pin-logo' />
         <span className='text-[#64748B] text-sm font-medium'>Delete</span>
       </li>
     </ul>
@@ -52,4 +46,4 @@ const Card = ({name , author} : CardProps) => {
   )
 }
 
-export default Card
+export default Card;
