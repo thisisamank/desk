@@ -30,24 +30,36 @@ const HomePage = () => {
         const files = e.target.files;
         if (files && files.length) {
             const folderPath = files[0].webkitRelativePath.split('/')[0];
-            console.log('Selected folder path:', folderPath);
+            try {
+                const response = await fetch('/api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ folderName: folderPath }),
+                });
+                const data = await response.json();
+                console.log('Full paths:', data.paths);
+            } catch (error) {
+                console.error('Error scanning directory:', error);
+            }
 
-            
+
             const formData = new FormData();
             for (let i = 0; i < files.length; i++) {
                 formData.append('files', files[i]);
             }
 
-            try {
-                const uploadCourse = await fetch(`${BASE_URL}/course`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await uploadCourse.json();
-                setCourses(data);
-            } catch (error) {
-                console.error('Error uploading folder:', error);
-            }
+            // try {
+            //     const uploadCourse = await fetch(`${BASE_URL}/course`, {
+            //         method: 'POST',
+            //         body: formData
+            //     });
+            //     const data = await uploadCourse.json();
+            //     setCourses(data);
+            // } catch (error) {
+            //     console.error('Error uploading folder:', error);
+            // }
         }
     };
 
