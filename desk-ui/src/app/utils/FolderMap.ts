@@ -1,3 +1,5 @@
+import os from 'os';
+
 export interface Lesson {
     id: string;
     title: string;
@@ -27,9 +29,13 @@ export interface Course {
   
 class CourseMap {
     private folderMap = new Map<string, Lesson[]>();
-  
+
+    private os = os.type();
+
+    private separator = this.os === 'Windows_NT' ? '\\' : '/';
+
     add(lesson: Lesson) {
-      let folders = lesson.path.split('/');
+      let folders = lesson.path.split(this.separator);
       let folder = '';
       for (let i = 0; i < folders.length; i++) {
         if (i === 0) {
