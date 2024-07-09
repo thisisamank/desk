@@ -6,9 +6,9 @@ import SearchBar from "./SearchBar";
 import folder from "@/../public/assets/folder-logo.svg";
 import video from "@/../public/assets/videos-logo.svg";
 import Card from "./Card";
+import { useRouter } from "next/navigation";
 import { mockData } from "../utils/mockData";
 import { BASE_URL } from "../constants/api";
-import { Course } from "../utils/FolderMap";
 
 interface ExtendedInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -22,6 +22,7 @@ export interface CourseGET {
   path: string;
 }
 const HomePage = () => {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [paths, setPaths] = useState<string[]>([]);
   const [courses, setCourses] = useState<CourseGET[]>([]);
@@ -132,11 +133,14 @@ const HomePage = () => {
             </div>
             <div className="w-full grid grid-cols-3 pt-5 h-full place-content-between gap-5">
               {courses?.map((data) => (
-                <Card
+                <div
                   key={data?.course_id}
-                  name={data?.name}
-                  author={data?.author}
-                />
+                  onClick={() =>
+                    router.push(`/video?course_id=${data?.course_id}`)
+                  }
+                >
+                  <Card name={data?.name} author={data?.author} />
+                </div>
               ))}
             </div>
           </div>
