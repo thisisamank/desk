@@ -73,6 +73,7 @@ const HomePage = () => {
       const data = await uploadCourse.json();
       console.log("Uploaded course:", data);
       setCourses(data);
+      fetchCourses();
     } catch (error) {
       console.error("Error uploading folder:", error);
     }
