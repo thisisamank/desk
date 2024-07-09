@@ -22,7 +22,7 @@ const Card = ({ name, author }: CardProps) => {
   };
 
   return (
-    <div className="min-w-32 h-fit py-4 px-3 border-[#E2E8F0] border-2 rounded-lg border-b-4 cursor-pointer">
+    <div className="w-fit md:w-auto md:min-w-32 h-fit py-4 px-3 border-[#E2E8F0] border-2 rounded-lg border-b-4 cursor-pointer">
       <div className="flex justify-between space-x-2">
         <h1 className="text-[#64748B] text-sm max-w-60">
           {exceedWords(name, 40)}
@@ -31,7 +31,7 @@ const Card = ({ name, author }: CardProps) => {
           <Image
             src={dotLogo}
             alt="dotLogo"
-            className="cursor-pointer"
+            className="cursor-pointer "
             onClick={handleGridClick}
           />
           {isGridOpen && (
