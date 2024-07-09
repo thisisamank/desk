@@ -31,7 +31,7 @@ const Card = ({ name, author }: CardProps) => {
           <Image
             src={dotLogo}
             alt="dotLogo"
-            className="cursor-pointer "
+            className="cursor-pointer hidden sm:block min-w-5 min-h-5"
             onClick={handleGridClick}
           />
           {isGridOpen && (
