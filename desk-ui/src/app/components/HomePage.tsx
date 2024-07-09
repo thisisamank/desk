@@ -15,11 +15,16 @@ interface ExtendedInputProps
   webkitdirectory?: string;
   directory?: string;
 }
-
+export interface CourseGET {
+  author: string;
+  course_id: string;
+  name: string;
+  path: string;
+}
 const HomePage = () => {
   const [search, setSearch] = useState("");
   const [paths, setPaths] = useState<string[]>([]);
-  const [courses, setCourses] = useState<Course>();
+  const [courses, setCourses] = useState<CourseGET[]>([]);
 
   const handleFolderClick = () => {
     const folderSelector = document.getElementById(
@@ -71,12 +76,24 @@ const HomePage = () => {
       console.error("Error uploading folder:", error);
     }
   };
-
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/course`);
+      const data = await response.json();
+      console.log("Fetched courses:", data);
+      setCourses(data?.data);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
   useEffect(() => {
     if (paths.length > 0) {
       uploadCourse(paths[0]);
     }
   }, [paths]);
+  useEffect(() => {
+    fetchCourses();
+  }, []);
   return (
     <div className="w-screen">
       <SearchBar search={search} setSearch={setSearch} />
@@ -101,7 +118,7 @@ const HomePage = () => {
           />
         </div>
       </div>
-      {mockData?.length > 0 && (
+      {courses?.length > 0 && (
         <div className="container-center w-screen pt-8">
           <div className="w-7/12">
             <h1 className="font-medium text-lg text-[#475569] pb-6">
@@ -114,8 +131,12 @@ const HomePage = () => {
               </h1>
             </div>
             <div className="w-full grid grid-cols-3 pt-5 h-full place-content-between gap-5">
-              {mockData?.map((data) => (
-                <Card key={data?.id} name={data?.name} author={data?.author} />
+              {courses?.map((data) => (
+                <Card
+                  key={data?.course_id}
+                  name={data?.name}
+                  author={data?.author}
+                />
               ))}
             </div>
           </div>
