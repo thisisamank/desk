@@ -132,15 +132,21 @@ const HomePage = () => {
                 Played last time
               </h1>
             </div>
-            <div className="w-full grid grid-cols-3 pt-5 h-full place-content-between gap-5">
+            <div className="w-full grid grid-cols-3 pt-5 h-full place-content-between auto-rows-fr gap-5">
               {courses?.map((data) => (
                 <div
                   key={data?.course_id}
                   onClick={() =>
                     router.push(`/video?course_id=${data?.course_id}`)
                   }
+                  className="h-full"
                 >
-                  <Card name={data?.name} author={data?.author} />
+                  <Card
+                    name={data?.name}
+                    author={data?.author}
+                    id={data?.course_id}
+                    updateCourses={fetchCourses}
+                  />
                 </div>
               ))}
             </div>
