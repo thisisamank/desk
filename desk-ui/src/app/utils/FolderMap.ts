@@ -28,43 +28,65 @@ export interface Course {
 }
   
 class CourseMap {
-    private folderMap = new Map<string, Lesson[]>();
+  private folderMap = new Map<string, { files: Lesson[], subdirectories: Map<string, string> }>();
 
-    private os = os.type();
+  private coursePath: string;
+  private os = os.type();
 
-    private separator = this.os === 'Windows_NT' ? '\\' : '/';
-
-    add(lesson: Lesson) {
-      let folders = lesson.path.split(this.separator);
-      let folder = '';
-      for (let i = 0; i < folders.length; i++) {
-        if (i === 0) {
-          folder = folders[i];
-          if (!this.folderMap.has(folder)) {
-            this.folderMap.set(folder, []);
-          }
-        } else {
-          let subFolders = this.folderMap.get(folder);
-          if (subFolders != null) {
-            if (!subFolders.includes(lesson)) {
-              subFolders.push(lesson);
-            }
-          }
-            folder = folders[i];
-            if(!this.folderMap.has(folder)){
-             this.folderMap.set(folder, []);
-             }
-        }
-      }
-}
-  
-    get(folder: string): Lesson[] {
-      return this.folderMap.get(folder) || [];
-    }
+  constructor(coursePath: string) {
+      this.coursePath = coursePath;
   }
-  
+
+  private separator = this.os === 'Windows_NT' ? '\\' : '/';
+
+  add(lesson: Lesson) {
+      const folders = lesson.path.split(this.separator);
+      let currentPath = '';
+
+      for (let i = 0; i < folders.length; i++) {
+          const part = folders[i];
+          if (i > 0) {
+              currentPath += this.separator + part;
+          } else {
+              currentPath = part;
+          }
+
+          if (!this.folderMap.has(currentPath)) {
+              this.folderMap.set(currentPath, { files: [], subdirectories: new Map() });
+          }
+
+          const entry = this.folderMap.get(currentPath);
+          if (entry && i < folders.length - 1) {
+              const nextPart = folders[i + 1];
+              const nextPath = currentPath + this.separator + nextPart;
+              entry.subdirectories.set(nextPart, nextPath); // Store both the name and full path
+          }
+
+          if (i === folders.length - 1 && entry) { // If it's the last part and it's a file
+              entry.files.push(lesson);
+          }
+      }
+  }
+
+  get(folder: string): { files: Lesson[], subdirectories: { name: string, fullPath: string }[] } {
+      const entry = this.folderMap.get(folder);
+      if (entry) {
+          return {
+              files: entry.files,
+              subdirectories: Array.from(entry.subdirectories).map(([name, fullPath]) => ({ name, fullPath }))
+          };
+      } else {
+          return { files: [], subdirectories: [] };
+      }
+  }
+
+  root(): { files: Lesson[], subdirectories: { name: string, fullPath: string }[] } {
+      return this.get(this.coursePath);
+  }
+}
+
 const parseAndAddLessons = (courseData: any) => {
-    const courseMap = new CourseMap();
+    const courseMap = new CourseMap(courseData.path);
   
     courseData.lessons.forEach((lessonData: any) => {
       const lesson: Lesson = {
