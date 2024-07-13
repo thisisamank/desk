@@ -31,7 +31,7 @@ const FolderStructure = () => {
         const courseData = await courseInfo.json();
         console.log(courseData);
         const courseMap = parseAndAddLessons(courseData.data[0]);
-        console.log(courseMap);
+
         setCourseMap(courseMap);
         if (
           courseMap &&
@@ -39,12 +39,9 @@ const FolderStructure = () => {
           typeof courseMap.root === "function"
         ) {
           const rootSubdirectories = courseMap.root().subdirectories;
-          console.log(rootSubdirectories);
+
           setCourseDirectory(rootSubdirectories);
         }
-
-        // Set the course data here if needed
-        // setCourseData(courseData.data);
       } catch (error) {
         console.error("Failed to fetch course data:", error);
       }
@@ -65,13 +62,8 @@ const FolderStructure = () => {
   const fetchSectionData = (sectionIndex: number) => {
     try {
       const section = courseMap.root().subdirectories[sectionIndex].fullPath;
-      console.log(
-        `Fetching data for section: ${section.name}`,
-        courseMap.get(section)
-      );
       const data = courseMap.get(section).subdirectories;
       setExpandedSectionData(data);
-      console.log("Data fetched successfully for section:", sectionIndex, data);
     } catch (error) {
       console.error("Error fetching section data:", error);
     }
