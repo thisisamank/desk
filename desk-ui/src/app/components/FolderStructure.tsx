@@ -19,36 +19,26 @@ const FolderStructure = () => {
     useState<expandedSectionData[]>();
   const searchParams = useSearchParams();
   const course_id = searchParams.get("course_id");
+
   useEffect(() => {
     const getCourse = async () => {
       if (!course_id) return;
 
       try {
-        const courseInfo = await fetch(
-          `http://127.0.0.1:8000/course/:id?id=${course_id}`,
-          { method: "GET" }
-        );
-        const courseData = await courseInfo.json();
-        console.log(courseData);
-        const courseMap = parseAndAddLessons(courseData.data[0]);
+        const response = await fetch(`/api/Folders/${course_id}`);
+        const data = await response.json();
 
+        const courseMap = parseAndAddLessons(data.courseData.data[0]);
         setCourseMap(courseMap);
-        if (
-          courseMap &&
-          courseMap.root &&
-          typeof courseMap.root === "function"
-        ) {
-          const rootSubdirectories = courseMap.root().subdirectories;
 
-          setCourseDirectory(rootSubdirectories);
-        }
+        const subDirectory = courseMap.root().subdirectories;
+        setCourseDirectory(subDirectory);
       } catch (error) {
         console.error("Failed to fetch course data:", error);
       }
     };
-
     getCourse();
-  }, [course_id]);
+  }, []);
 
   const toggleSection = (sectionIndex: number) => {
     if (expandedSection === sectionIndex) {
