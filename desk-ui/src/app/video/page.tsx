@@ -1,4 +1,3 @@
-
 import React from "react";
 import Video from "../lib/Video";
 import FolderStructure from "../components/FolderStructure";
@@ -7,12 +6,11 @@ export default function Page() {
   return (
     <div className="flex h-screen">
       <div className="w-[70%]">
-          <Video/>
+        <Video />
       </div>
-      <div className="w-[30%] h-[600px]">
+      <div className="w-[30%] h-[580px]">
         <FolderStructure />
       </div>
-
     </div>
   );
 }
