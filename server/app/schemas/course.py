@@ -5,7 +5,7 @@ from ..schemas.lesson import Lesson
 class Course(BaseModel):
     id: str
     path: str
-    lessons: List[Lesson]
-    last_lesson_played: Lesson
+    lessons: dict
+    last_lesson_played: dict
     name: str
     author: str

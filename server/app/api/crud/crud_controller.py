@@ -36,7 +36,6 @@ class CrudController:
         
 
     def add_course(self,course_path: str, course: Course):
-        course.lessons.sort(key = lambda lesson: lesson.name)
         if(self.exists(course_path)):
             deskLogger.error(f"Course with id {course.id} already exist!")
             raise DatabaseError(f"Course with id {course.id} already exist!")

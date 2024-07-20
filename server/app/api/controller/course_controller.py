@@ -18,13 +18,8 @@ class CourseController:
 
     def add_course(self,path: str):
         course_name = path.split('/')[-1]
-        lessons_path = self.file_controller.get_all_files(path)
-        lessons: List[Lesson] = []
-        for file in lessons_path:
-            lesson_name = file.name
-            lesson = Lesson(path=str(file), id=generate_short_id(), name=lesson_name)
-            lessons.append(lesson)
-        course = Course(id=generate_short_id(), path=path, lessons=lessons,last_lesson_played=lessons[0], name=course_name, author="admin")
+        lessons = self.file_controller.generate_folder_structure(path)
+        course = Course(id=generate_short_id(), path=path, lessons=lessons,last_lesson_played= {}, name=course_name, author="admin")
         return self.crud_controller.add_course(path, course)
 
     def delete_course(self, id: str):

@@ -6,6 +6,5 @@ class Lesson(BaseModel):
     path: str
     paused_at: time = time(0,0,0)
     name: str
-
-
-
+    # PDF, HTML, VIDEO, AUDIO, IMAGE, TEXT
+    type: str
