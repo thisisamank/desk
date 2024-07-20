@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const courseData = await courseInfo.json();
-
+    console.log(courseData);
     return NextResponse.json({ courseData }, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch course data:", error);
