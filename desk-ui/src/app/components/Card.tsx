@@ -30,7 +30,7 @@ const Card = ({ name, author, id, updateCourses }: CardProps) => {
         method: "DELETE",
       });
       const data = await response.json();
-      console.log(data);
+
       updateCourses();
     } catch (error) {
       console.error("Error deleting course:", error);
