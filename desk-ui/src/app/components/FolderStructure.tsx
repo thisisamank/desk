@@ -24,10 +24,10 @@ const Folder: React.FC<FolderProps> = ({ data, idx }) => {
 
   if (data.type === "folder") {
     return (
-      <div className="border-b border-gray-200 last:border-b-0">
+      <div className="border-b border-gray-200  last:border-b-0">
         <div
           onClick={toggleFolder}
-          className="w-full px-4 py-2 flex justify-between items-center bg-white hover:bg-gray-50 transition-colors duration-150 ease-in-out cursor-pointer"
+          className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-50 bg-white  transition-colors duration-150 ease-in-out cursor-pointer"
         >
           {data.name}
           <svg
@@ -47,8 +47,8 @@ const Folder: React.FC<FolderProps> = ({ data, idx }) => {
           </svg>
         </div>
         {isOpen && data.children && (
-          <div className="bg-gray-50 px-4 py-2">
-            <div className="text-sm text-gray-600 mb-2">11/16 | 27hr 30min</div>
+          <div className="bg-gray-50 px-4 py-4">
+            <div className="text-sm text-gray-600 pb-2">11/16 | 27hr 30min</div>
             {data.children.map((child, idx) => (
               <Folder key={child.id || child.name} data={child} idx={idx} />
             ))}
@@ -59,7 +59,7 @@ const Folder: React.FC<FolderProps> = ({ data, idx }) => {
   }
 
   return (
-    <div>
+    <div className="py-2">
       <div className="flex items-center  flex-grow ">
         <input
           type="checkbox"
@@ -123,10 +123,10 @@ const FolderStructure = () => {
               />
             </svg>
           </div>
-          <div className="h-[calc(100%-64px)] mt-3 overflow-y-auto">
+          <div className="h-[calc(100%-64px)] overflow-y-auto">
             {folderData.length > 0 ? (
               folderData.map((item, idx) => (
-                <div className=" border-b border-gray-200 py-2 ">
+                <div className=" border-b border-gray-200  ">
                   <Folder key={item.id || item.name} data={item} idx={idx} />
                 </div>
               ))
