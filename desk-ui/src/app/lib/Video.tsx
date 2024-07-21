@@ -15,41 +15,59 @@ export default function Video() {
     function initializePlayer() {
       if (videoRef.current) {
         player = videojs(videoRef.current, {
-          
-            controlBar: {
-              children: ['playToggle', 'skipBackward', 'skipForward', 'volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'seekToLive', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subsCapsButton', 'audioTrackButton', 'ShareButton', 'hlsQualitySelector', 'QualitySelector', 'pictureInPictureToggle', 'fullscreenToggle'],
-              skipButtons: {
-                forward: 10,
-                backward: 10
-              },
-              currentTimeDisplay: true,
+          controlBar: {
+            children: [
+              "playToggle",
+              "skipBackward",
+              "skipForward",
+              "volumePanel",
+              "currentTimeDisplay",
+              "timeDivider",
+              "durationDisplay",
+              "progressControl",
+              "liveDisplay",
+              "seekToLive",
+              "remainingTimeDisplay",
+              "customControlSpacer",
+              "playbackRateMenuButton",
+              "chaptersButton",
+              "descriptionsButton",
+              "subsCapsButton",
+              "audioTrackButton",
+              "ShareButton",
+              "hlsQualitySelector",
+              "QualitySelector",
+              "pictureInPictureToggle",
+              "fullscreenToggle",
+            ],
+            skipButtons: {
+              forward: 10,
+              backward: 10,
             },
-            inactivityTimeout: 3000,
-            preload: 'auto',
-            autoplay: true, 
-            controls: true,
-            responsive: true,
-            fluid: true,
-            liveui: true,
-            language: '',
-            sources: [
-              {
-                src:'https://res.cloudinary.com/dzkldv06d/video/upload/v1720251300/Welcome_Dance_-_Meme_Template_gmxdmi.mp4',
-                type:'video/mp4'
-              }
-              ],
-              width: 600,
-              height: 300,
-              
-              
-              playbackRates: [0.5, 1, 1.5, 2],
-            poster: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==',
-            techOrder: ["html5"],
-            html5: {
+            currentTimeDisplay: true,
+          },
+          inactivityTimeout: 3000,
+          preload: "auto",
+          autoplay: true,
+          controls: true,
+          responsive: true,
+          fluid: true,
+          liveui: true,
+          language: "",
+          sources: [
+            {
+              src: "https://res.cloudinary.com/dzkldv06d/video/upload/v1720251300/Welcome_Dance_-_Meme_Template_gmxdmi.mp4",
+              type: "video/mp4",
             },
-          
-          
-        
+          ],
+          width: 600,
+          height: 300,
+
+          playbackRates: [0.5, 1, 1.5, 2],
+          poster:
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==",
+          techOrder: ["html5"],
+          html5: {},
         });
       }
     }

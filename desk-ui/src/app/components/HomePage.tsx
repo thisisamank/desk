@@ -49,7 +49,7 @@ const HomePage = () => {
           body: JSON.stringify({ folderName: folderPath }),
         });
         const data = await response.json();
-        console.log("Full paths:", data.paths);
+
         setPaths(data.paths);
       } catch (error) {
         console.error("Error scanning directory:", error);
@@ -71,7 +71,7 @@ const HomePage = () => {
       });
 
       const data = await uploadCourse.json();
-      console.log("Uploaded course:", data);
+
       setCourses(data);
       fetchCourses();
     } catch (error) {
@@ -82,7 +82,7 @@ const HomePage = () => {
     try {
       const response = await fetch(`${BASE_URL}/course`);
       const data = await response.json();
-      console.log("Fetched courses:", data);
+
       setCourses(data?.data);
     } catch (error) {
       console.error("Error fetching courses:", error);

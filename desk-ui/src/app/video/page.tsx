@@ -1,9 +1,16 @@
-import React from 'react'
-import Video from '../lib/Video'
-export default function page() {
+import React from "react";
+import Video from "../lib/Video";
+import FolderStructure from "../components/FolderStructure";
+
+export default function Page() {
   return (
-    <div className='w-[40rem]'>
-      <Video/>
+    <div className="flex h-screen">
+      <div className="w-[70%]">
+        <Video />
+      </div>
+      <div className="w-[30%] h-[580px]">
+        <FolderStructure />
+      </div>
     </div>
-  )
+  );
 }
