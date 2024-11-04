@@ -5,6 +5,7 @@ import json
 import uuid
 from datetime import time
 from ...schemas.lesson import Lesson
+from moviepy.editor import VideoFileClip
 
 
 def determine_file_type(file_name):
@@ -23,6 +24,17 @@ def determine_file_type(file_name):
         return 'TEXT'
     else:
         return 'UNKNOWN'
+
+def get_video_duration(file_path) -> str:
+    try:
+        with VideoFileClip(file_path) as video:
+            duration = video.duration 
+            minutes = int(duration // 60)
+            seconds = int(duration % 60)
+            return f"{minutes}min {seconds}s"
+    except:
+        return ""
+
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -68,7 +80,8 @@ class FileController:
                         id=str(uuid.uuid4()),
                         path=str(file),
                         name=file.name,
-                        type=file_type
+                        type=file_type,
+                        video_duration = get_video_duration(str(file))
                     )
                     folder_dict["children"].append(lesson.dict())
 

@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { exceedWords } from "../utils/helper";
+import React, { useState } from "react";
 import { MdAccessTime } from "react-icons/md";
+import { exceedWords } from "../utils/helper";
 interface File {
   id: string;
   path: string;
   paused_at: string;
   name: string;
   type: "PDF" | "IMAGE" | "folder";
+  video_duration: string;
   children?: File[];
 }
 interface FolderProps {
@@ -96,7 +97,7 @@ const Folder: React.FC<FolderProps> = ({
       <div className="flex items-center">
         <span className="text-xs text-gray-500 ml-8 mr-2 flex items-center ">
           <MdAccessTime />
-          <span className="ml-1">{"27min"}</span>
+          <span className="ml-1">{data.video_duration}</span>
         </span>
       </div>
     </div>
