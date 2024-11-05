@@ -8,7 +8,7 @@ interface File {
   path: string;
   paused_at: string;
   name: string;
-  type: "PDF" | "IMAGE" | "folder";
+  type: "PDF" | "IMAGE" | "VIDEO" | "TEXT" | "folder" | "HTML"; 
   video_duration: string;
   children?: File[];
 }

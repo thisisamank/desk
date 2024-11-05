@@ -22,18 +22,25 @@ export default function Video({ videoPath }: { videoPath: string }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+               "range": "bytes=0-"
           },
           body: JSON.stringify({
-            videoPath,
-             "range": "bytes=0-"
+            filePath:videoPath,
+          
           }),
         });
-
+    console.log(response)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const url = URL.createObjectURL(await response.blob());
+        const contentType = response.headers.get('Content-Type');
+        console.log(contentType)
+        if (!contentType || !contentType.includes('video') && !contentType.includes('application')) {
+          throw new Error('Invalid Content-Type');
+        }
+      
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
        
         console.log(url);
         setVideoUrl(url);
@@ -146,7 +153,7 @@ export default function Video({ videoPath }: { videoPath: string }) {
   return (
     <div className="video-container">
       {!isVideoReady && <p className="text-black">Loading video...</p>}
-
+ <p>{videoPath}</p>
       {videoUrl && isVideoReady && (
         <div ref={containerRef} className="video-wrapper">
           <div data-vjs-player>
