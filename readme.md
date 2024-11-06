@@ -1,4 +1,4 @@
-# Offline Course Player
+# Desk: An offline Course Player
 
 An offline course player designed to help you load and view your educational content in a distraction-free environment. This tool enhances the learning experience by allowing offline access to various formats like video, text, HTML, and PDF.
 
@@ -55,7 +55,7 @@ We welcome contributions to improve and expand the offline course player! Follow
 1. **Fork the repository**.
 2. **Clone your fork**:
    ```bash
-   git clone https://github.com/yourusername/offline-course-player.git
+   git clone https://github.com/thisisamank/desk.git
    ```
 3. **Create a new branch**:
    ```bash
@@ -74,9 +74,13 @@ We welcome contributions to improve and expand the offline course player! Follow
 
 ### Opening an Issue
 
-If you find a bug or have a feature request, please open an issue. Provide as much detail as possible to help us address the issue effectively.
+If you encounter a bug or have a feature request, please open an issue on our GitHub repository. Provide as much detail as possible to help us address the issue effectively. Use the following template to ensure all necessary information is included:
 
----
+1. **Describe the Issue**: Summarize the problem or feature request.
+2. **Steps to Reproduce**: List any steps to reproduce the issue or details about the feature.
+3. **Environment**: Provide details about your operating system, Node.js version, Python version, and browser (if applicable).
+4. **Logs**: Paste relevant server and UI logs by using the format below:
+
+
 
 **Happy Learning!**
-```
