@@ -69,6 +69,15 @@ def update_course(id: str, name: str = None, last_lesson_id: str = None):
     except Exception as e:
         logger.error(f"Error updating course: {e}")
         return create_error_response("error", "Error updating course", str(e))
+    
+@app.put('/course/:course_id/:id/:is_complete')
+def mark_lesson_as_complete(course_id: str, lesson_id: str,is_complete: bool):
+    try:
+        lesson = course_controller.update_lesson(course_id,lesson_id, is_complete)
+        return create_response("success", "Lesson marked done successfully", lesson)
+    except Exception as e:
+        logger.error(f"Error marking lesson: {e}")
+        return create_error_response("error", "Error updating lesson", str(e))
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc: HTTPException):

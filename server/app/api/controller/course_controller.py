@@ -27,3 +27,6 @@ class CourseController:
     
     def update_course(self, id:str, name: str | None, last_lesson_id: str | None):
         return self.crud_controller.update_course(id, name, last_lesson_id)
+    
+    def update_lesson(self, course_id: str, lesson_id: str, is_complete:bool):
+        return self.crud_controller.update_lesson(course_id, lesson_id,is_complete)
