@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
 import { useSearchParams } from "next/navigation";
-import "../../../styles/VideoPlayer.scss";
+import { useCallback, useEffect, useRef, useState } from "react";
+import videojs from "video.js";
 import type Player from "video.js/dist/types/player";
+import "video.js/dist/video-js.css";
+import "../../../styles/VideoPlayer.scss";
 
 export default function Video({ videoPath }: { videoPath: string }) {
   const searchParams = useSearchParams();
@@ -153,7 +153,6 @@ export default function Video({ videoPath }: { videoPath: string }) {
   return (
     <div className="video-container">
       {!isVideoReady && <p className="text-black">Loading video...</p>}
- <p>{videoPath}</p>
       {videoUrl && isVideoReady && (
         <div ref={containerRef} className="video-wrapper">
           <div data-vjs-player>
