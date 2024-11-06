@@ -1,90 +1,166 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
+import { useSearchParams } from "next/navigation";
 import "../../../styles/VideoPlayer.scss";
-// import '@digitaltheatre/videojs-theme-dt/dist/theme/index.css';
-// import '../../../styles/try.scss'
-import Player from "video.js/dist/types/player";
-export default function Video() {
-  const videoRef = useRef(null);
+import type Player from "video.js/dist/types/player";
+
+export default function Video({ videoPath }: { videoPath: string }) {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("course_id");
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<Player | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    let player: Player | undefined;
-
-    function initializePlayer() {
-      if (videoRef.current) {
-        player = videojs(videoRef.current, {
-          controlBar: {
-            children: [
-              "playToggle",
-              "skipBackward",
-              "skipForward",
-              "volumePanel",
-              "currentTimeDisplay",
-              "timeDivider",
-              "durationDisplay",
-              "progressControl",
-              "liveDisplay",
-              "seekToLive",
-              "remainingTimeDisplay",
-              "customControlSpacer",
-              "playbackRateMenuButton",
-              "chaptersButton",
-              "descriptionsButton",
-              "subsCapsButton",
-              "audioTrackButton",
-              "ShareButton",
-              "hlsQualitySelector",
-              "QualitySelector",
-              "pictureInPictureToggle",
-              "fullscreenToggle",
-            ],
-            skipButtons: {
-              forward: 10,
-              backward: 10,
-            },
-            currentTimeDisplay: true,
+    async function getStream() {
+      try {
+        const response = await fetch("/api/videos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+               "range": "bytes=0-"
           },
-          inactivityTimeout: 3000,
-          preload: "auto",
-          autoplay: true,
-          controls: true,
-          responsive: true,
-          fluid: true,
-          liveui: true,
-          language: "",
-          sources: [
-            {
-              src: "https://res.cloudinary.com/dzkldv06d/video/upload/v1720251300/Welcome_Dance_-_Meme_Template_gmxdmi.mp4",
-              type: "video/mp4",
-            },
-          ],
-          width: 600,
-          height: 300,
-
-          playbackRates: [0.5, 1, 1.5, 2],
-          poster:
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==",
-          techOrder: ["html5"],
-          html5: {},
+          body: JSON.stringify({
+            filePath:videoPath,
+          
+          }),
         });
+    console.log(response)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const contentType = response.headers.get('Content-Type');
+        console.log(contentType)
+        if (!contentType || !contentType.includes('video') && !contentType.includes('application')) {
+          throw new Error('Invalid Content-Type');
+        }
+      
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+       
+        console.log(url);
+        setVideoUrl(url);
+        setIsVideoReady(true);
+      } catch (err) {
+        console.error("Error fetching video:", err);
       }
     }
 
-    const timer = setTimeout(initializePlayer, 0);
+    setIsVideoReady(false);
+    getStream();
 
     return () => {
-      clearTimeout(timer);
-      if (!player || player.isDisposed()) return;
-      player.dispose();
-      videoRef.current = null;
+      if (videoUrl) {
+        URL.revokeObjectURL(videoUrl);
+      }
     };
-  }, [videoRef]);
+  }, [videoPath]);
+
+  const initializePlayer = useCallback(() => {
+    if (!videoRef.current) return;
+
+    const player = videojs(videoRef.current, {
+      controlBar: {
+        children: [
+          "playToggle",
+          "skipBackward",
+          "skipForward",
+          "volumePanel",
+          "currentTimeDisplay",
+          "timeDivider",
+          "durationDisplay",
+          "progressControl",
+          "liveDisplay",
+          "seekToLive",
+          "remainingTimeDisplay",
+          "customControlSpacer",
+          "playbackRateMenuButton",
+          "chaptersButton",
+          "descriptionsButton",
+          "subsCapsButton",
+          "audioTrackButton",
+          "pictureInPictureToggle",
+          "fullscreenToggle",
+        ],
+        skipButtons: {
+          forward: 10,
+          backward: 10,
+        },
+      },
+      inactivityTimeout: 3000,
+      preload: "auto",
+      autoplay: false,
+      controls: true,
+      responsive: true,
+      fluid: true,
+      sources: [
+        {
+          src: videoUrl,
+          type: "video/mp4",
+        },
+      ],
+      width: 600,
+      height: 300,
+      playbackRates: [0.5, 1, 1.5, 2],
+      poster:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==",
+    });
+
+    player.on("error", function () {
+      const error = player.error();
+      console.error("Video.js Error:", error);
+    });
+
+    playerRef.current = player;
+  }, [videoUrl]);
+
+  useEffect(() => {
+    if (!videoUrl || !isVideoReady || !videoRef.current || !containerRef.current) return;
+
+    if (playerRef.current) {
+      playerRef.current.dispose();
+      playerRef.current = null;
+    }
+
+
+    const timeoutId = setTimeout(() => {
+      initializePlayer();
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [videoUrl, isVideoReady, initializePlayer]);
+
+ 
+  useEffect(() => {
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, []);
 
   return (
-    <div data-vjs-player className="">
-      <video ref={videoRef} className="video-js " />
+    <div className="video-container">
+      {!isVideoReady && <p className="text-black">Loading video...</p>}
+ <p>{videoPath}</p>
+      {videoUrl && isVideoReady && (
+        <div ref={containerRef} className="video-wrapper">
+          <div data-vjs-player>
+            <video ref={videoRef} className="video-js vjs-big-play-centered" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

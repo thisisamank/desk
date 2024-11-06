@@ -8,3 +8,5 @@ class Lesson(BaseModel):
     name: str
     # PDF, HTML, VIDEO, AUDIO, IMAGE, TEXT
     type: str
+    video_duration: str
+    is_complete: bool

@@ -1,3 +1,4 @@
+import json
 from tinydb import TinyDB, Query
 from pathlib import Path
 from ...schemas.course import Course
@@ -96,25 +97,48 @@ class CrudController:
         else:
             deskLogger.error(f"Couldn't find the course with id {id}")
             raise NotFoundError(f"Couldn't find the course with id {id}")
-    
-    def update_course(self, id:str, name: str | None, last_lesson_id: str | None):
+        
+    def update_lesson(self, course_id: str, lesson_id: str, is_complete: bool):
         courseQ = Query()
-        course_info = self.userDB.get(courseQ.course_id == id)
+        course_info = self.userDB.get(courseQ.course_id == course_id)
         if course_info is None:
-            deskLogger.error(f"Couldn't find the course with id {id}")
-            raise NotFoundError(f"Couldn't find the course with id {id}")
-        if name is not None:
-            course_info.name = name
-        if last_lesson_id is not None:
-            path = Path(course_info['path'])
-            course_info_path = path / '.desk' / 'info.json'
-            course_db = TinyDB(course_info_path)
-            last_lesson = course_db.get(Query().id == last_lesson_id)
-            if last_lesson is None:
-                deskLogger.error(f"Couldn't find the lesson with id {last_lesson_id}")
-                raise NotFoundError(f"Couldn't find the lesson with id {last_lesson_id}")
-            course_info.last_lesson_played = last_lesson
-        self.userDB.update(course_info, courseQ.course_id == id)
-        deskLogger.info(f"Course updated with id {id}")
-        return course_info
-
+            deskLogger.error(f"Couldn't find the course with id {course_id}")
+            raise NotFoundError(f"Couldn't find the course with id {course_id}")
+        
+        path = Path(course_info['path'])
+        if not path.exists():
+            deskLogger.error(f"Couldn't find the course at {path} for course id {course_id}")
+            raise NotFoundError(f"Couldn't find the course at {path} for course id {course_id}")
+        
+        course_info_path = path / '.desk' / 'info.json'
+        course_db = TinyDB(course_info_path)
+        
+        course_data_list = course_db.all()
+        if not course_data_list:
+            deskLogger.error(f"Couldn't find course data in DB for course id {course_id}")
+            raise NotFoundError(f"Couldn't find course data in DB for course id {course_id}")
+        
+        deskLogger.info(f"Course data list: {course_data_list}")
+        
+        course_data = course_data_list[0]
+        
+        def find_and_update_lesson(node, lesson_id, is_complete):
+            if 'id' in node and node['id'] == lesson_id:
+                node['is_complete'] = is_complete
+                return True
+            elif 'children' in node:
+                for child in node['children']:
+                    found = find_and_update_lesson(child, lesson_id, is_complete)
+                    if found:
+                        return True
+            return False
+        
+        found = find_and_update_lesson(course_data['lessons'], lesson_id, is_complete)
+        
+        if found:
+            course_db.truncate()
+            course_db.insert(course_data)
+            deskLogger.info(f"Updated lesson {lesson_id} in course {course_id}")
+        else:
+            deskLogger.error(f"Couldn't find lesson with id {lesson_id} in course {course_id}")
+            raise NotFoundError(f"Couldn't find lesson with id {lesson_id} in course {course_id}")

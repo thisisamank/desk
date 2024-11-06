@@ -1,13 +1,11 @@
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Any
 from app.logger import deskLogger
 import json
 import uuid
 from datetime import time
-from pathlib import Path
-from typing import List, Dict, Any
-
 from ...schemas.lesson import Lesson
+from moviepy.editor import VideoFileClip
 
 
 def determine_file_type(file_name):
@@ -26,6 +24,17 @@ def determine_file_type(file_name):
         return 'TEXT'
     else:
         return 'UNKNOWN'
+
+def get_video_duration(file_path) -> str:
+    try:
+        with VideoFileClip(file_path) as video:
+            duration = video.duration 
+            minutes = int(duration // 60)
+            seconds = int(duration % 60)
+            return f"{minutes}min {seconds}s"
+    except:
+        return ""
+
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -48,20 +57,34 @@ class FileController:
             }
 
             try:
+                folders = []
+                files = []
+
                 for item in folder_path.iterdir():
                     if item.name.startswith('.'):
                         continue
                     if item.is_dir():
-                        folder_dict["children"].append(folder_to_dict(item))
+                        folders.append(item)
                     else:
-                        file_type = determine_file_type(item.name)
-                        lesson = Lesson(
-                            id=str(uuid.uuid4()),
-                            path=str(item),
-                            name=item.name,
-                            type=file_type
-                        )
-                        folder_dict["children"].append(lesson.dict())
+                        files.append(item)
+
+                folders = sorted(folders, key=lambda x: x.name.lower())
+                files = sorted(files, key=lambda x: x.name.lower())
+
+                for folder in folders:
+                    folder_dict["children"].append(folder_to_dict(folder))
+
+                for file in files:
+                    file_type = determine_file_type(file.name)
+                    lesson = Lesson(
+                        id=str(uuid.uuid4()),
+                        path=str(file),
+                        name=file.name,
+                        type=file_type,
+                        video_duration = get_video_duration(str(file))
+                    )
+                    folder_dict["children"].append(lesson.dict())
+
             except PermissionError:
                 pass
 

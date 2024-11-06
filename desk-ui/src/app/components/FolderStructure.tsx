@@ -1,21 +1,29 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { exceedWords } from "../utils/helper";
+
+import React, { useState } from "react";
 import { MdAccessTime } from "react-icons/md";
+import { exceedWords } from "../utils/helper";
 interface File {
   id: string;
   path: string;
   paused_at: string;
   name: string;
-  type: "PDF" | "IMAGE" | "folder";
+  type: "PDF" | "IMAGE" | "VIDEO" | "TEXT" | "folder" | "HTML"; 
+  video_duration: string;
   children?: File[];
 }
 interface FolderProps {
   data: File;
   idx: number;
+  selectedFile: any;
+  setSelectedFile: any;
 }
-const Folder: React.FC<FolderProps> = ({ data, idx }) => {
+const Folder: React.FC<FolderProps> = ({
+  data,
+  idx,
+  selectedFile,
+  setSelectedFile,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleFolder = () => {
@@ -50,7 +58,13 @@ const Folder: React.FC<FolderProps> = ({ data, idx }) => {
           <div className="bg-gray-50 px-4 py-4">
             <div className="text-sm text-gray-600 pb-2">11/16 | 27hr 30min</div>
             {data.children.map((child, idx) => (
-              <Folder key={child.id || child.name} data={child} idx={idx} />
+              <Folder
+                key={child.id || child.name}
+                data={child}
+                idx={idx}
+                selectedFile={selectedFile}
+                setSelectedFile={setSelectedFile}
+              />
             ))}
           </div>
         )}
@@ -59,7 +73,14 @@ const Folder: React.FC<FolderProps> = ({ data, idx }) => {
   }
 
   return (
-    <div className="py-2">
+    <div
+      className={`py-2 cursor-pointer ${
+        selectedFile && selectedFile.id === data.id ? "bg-blue-100" : ""
+      }`}
+      onClick={() => {
+        setSelectedFile(data);
+      }}
+    >
       <div className="flex items-center  flex-grow ">
         <input
           type="checkbox"
@@ -76,31 +97,22 @@ const Folder: React.FC<FolderProps> = ({ data, idx }) => {
       <div className="flex items-center">
         <span className="text-xs text-gray-500 ml-8 mr-2 flex items-center ">
           <MdAccessTime />
-          <span className="ml-1">{"27min"}</span>
+          <span className="ml-1">{data.video_duration}</span>
         </span>
       </div>
     </div>
   );
 };
 
-const FolderStructure = () => {
-  const [folderData, setFolderData] = useState<File[]>([]);
-  const searchParams = useSearchParams();
-  const course_id = searchParams.get("course_id");
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/Folders/${course_id}`);
-        const datas = await response.json();
-        setFolderData(datas.courseData.data[0].lessons.children);
-      } catch (error) {
-        console.error("Error fetching folder data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+const FolderStructure = ({
+  selectedFile,
+  setSelectedFile,
+  folderData,
+}: {
+  selectedFile: File;
+  folderData: File[];
+  setSelectedFile: React.Dispatch<React.SetStateAction<File | undefined>>;
+}) => {
   return (
     <>
       <div className="w-full h-full bg-white rounded-lg shadow-md overflow-hidden">
@@ -126,8 +138,14 @@ const FolderStructure = () => {
           <div className="h-[calc(100%-64px)] overflow-y-auto">
             {folderData.length > 0 ? (
               folderData.map((item, idx) => (
-                <div className=" border-b border-gray-200  ">
-                  <Folder key={item.id || item.name} data={item} idx={idx} />
+                <div key={idx} className=" border-b border-gray-200  ">
+                  <Folder
+                    key={item.id || item.name}
+                    data={item}
+                    idx={idx}
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                  />
                 </div>
               ))
             ) : (
