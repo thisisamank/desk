@@ -70,6 +70,21 @@ def update_course(id: str, name: str = None, last_lesson_id: str = None):
         logger.error(f"Error updating course: {e}")
         return create_error_response("error", "Error updating course", str(e))
     
+
+class YouTubeCourseRequest(BaseModel):
+    playlist_url: str
+
+@app.post('/course/youtube/{course_name}/')
+async def add_youtube_course(course_name: str, request: YouTubeCourseRequest):
+    try:
+        playlist_url = request.playlist_url
+        course = await course_controller.add_youtube_course(course_name, playlist_url)
+        return create_response("success", "YouTube course added successfully", course)
+    except Exception as e:
+        logger.error(f"Error adding YouTube course: {e}")
+        return create_error_response("error", "Error adding YouTube course", str(e))
+
+
 @app.put('/course/:course_id/:id/:is_complete')
 def mark_lesson_as_complete(course_id: str, lesson_id: str,is_complete: bool):
     try:

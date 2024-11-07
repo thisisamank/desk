@@ -1,4 +1,6 @@
 import json
+from typing import List
+import uuid
 from tinydb import TinyDB, Query
 from pathlib import Path
 from ...schemas.course import Course
@@ -6,6 +8,9 @@ from ...schemas.lesson import Lesson
 from ...schemas.response import ErrorResponseModel
 from fastapi.encoders import jsonable_encoder
 from app.logger import deskLogger
+from bs4 import BeautifulSoup
+import asyncio
+from pyppeteer import launch
 
 class DatabaseError(Exception):
     pass
@@ -142,3 +147,35 @@ class CrudController:
         else:
             deskLogger.error(f"Couldn't find lesson with id {lesson_id} in course {course_id}")
             raise NotFoundError(f"Couldn't find lesson with id {lesson_id} in course {course_id}")
+
+    
+
+    async def load_course_from_youtube_playlist(self,url: str) -> List[Lesson]:
+        browser = await launch()
+        page = await browser.newPage()
+        await page.goto(url)
+        page = await page.content()
+        dom = BeautifulSoup(page,'html.parser')
+        links = dom.find_all(id='video-title')
+        lessons = []
+        for link in links:
+            youtube_link = "https://www.youtube.com"+link['href']
+            name = link['title']
+            lesson = Lesson(
+                id=str(uuid.uuid4()),
+                path=youtube_link,
+                name=name,
+                type='VIDEO',
+                video_duration = "",
+                is_complete=False
+            )
+            lessons.append(lesson)
+        await browser.close()
+        return lessons
+
+        
+    
+
+
+            
+            

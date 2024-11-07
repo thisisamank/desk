@@ -43,6 +43,21 @@ class CustomJSONEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class FileController:
+
+
+    def generate_youtube_folder_structure(self, root: str, lessons: List[Lesson], course_name: str) -> Dict[str, Any]:
+        
+        folder_dict = {
+            "type": "folder",
+            "name": course_name,
+            "children": []
+        }
+
+        for lesson in lessons:
+            folder_dict["children"].append(lesson.dict())
+        
+        return folder_dict
+
     
     def generate_folder_structure(self, root: str) -> Dict[str, Any]:
         path = Path(root)
