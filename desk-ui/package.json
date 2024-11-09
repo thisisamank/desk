@@ -10,13 +10,23 @@
   },
   "dependencies": {
     "@digitaltheatre/videojs-theme-dt": "^1.1.1",
+    "@radix-ui/react-checkbox": "^1.1.2",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.455.0",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-pdf": "^9.1.1",
     "sass": "^1.77.8",
-    "video.js": "^8.19.1"
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7",
+    "video.js": "^8.19.1",
+    "videojs-youtube": "^3.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
