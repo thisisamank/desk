@@ -9,7 +9,7 @@ import Card from "./Card";
 import { useRouter } from "next/navigation";
 import { mockData } from "../utils/mockData";
 import { BASE_URL } from "../constants/api";
-
+import { UploadYoutubePlaylist } from "./YoutubeUpload";
 interface ExtendedInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   webkitdirectory?: string;
@@ -61,6 +61,26 @@ const HomePage = () => {
       //   }
     }
   };
+
+  async function uploadPlaylist(url: string, CourseName: string) {
+    try {
+      const uploadPlaylist = await fetch(
+        `${BASE_URL}/course/youtube/${CourseName}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ playlist_url: url }),
+        }
+      );
+
+      console.log(uploadPlaylist);
+      fetchCourses();
+    } catch (err) {
+      console.log("Error uploading playlist", err);
+    }
+  }
   const uploadCourse = async (filePath: string) => {
     try {
       const url = new URL(`${BASE_URL}/course`);
@@ -99,7 +119,7 @@ const HomePage = () => {
   return (
     <div className="w-screen">
       <SearchBar search={search} setSearch={setSearch} />
-      <div className="container-center w-screen pt-3">
+      <div className="flex mx-auto w-fit">
         <div
           className="py-3 px-5 space-x-2 bg-[#F8FAFC] rounded-full container-center w-auto cursor-pointer"
           onClick={handleFolderClick}
@@ -119,6 +139,8 @@ const HomePage = () => {
             } as ExtendedInputProps)}
           />
         </div>
+
+        <UploadYoutubePlaylist uploadPlaylist={uploadPlaylist}/>
       </div>
       {courses?.length > 0 && (
         <div className="container-center w-screen pt-8">

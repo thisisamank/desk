@@ -7,6 +7,7 @@ import ImageCard from "../components/ImageCard";
 import PDFViewer from "../components/PDFViewer"; 
 import TextComponent from "../components/TextComponent"; 
 import HTMLViewer from "../components/HTMLViewer";
+
 interface File {
   id: string;
   path: string;
@@ -29,6 +30,7 @@ export default function Page() {
         const response = await fetch(`/api/Folders/${course_id}`);
         const datas = await response.json();
         setFolderData(datas.courseData.data[0].lessons.children);
+        
         console.log(datas.courseData.data[0].lessons.children);
       } catch (error) {
         console.error("Error fetching folder data:", error);
@@ -62,6 +64,7 @@ export default function Page() {
   return (
     <div className="flex h-screen">
       <div className="w-[70%]">
+        {selectedFile?.path}
         {renderContent()}
       </div>
       <div className="w-[30%] h-[580px] overflow-auto">
