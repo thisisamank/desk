@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import SearchBar from "./SearchBar";
 import folder from "@/../public/assets/folder-logo.svg";
 import video from "@/../public/assets/videos-logo.svg";
-import Card from "./Card";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { mockData } from "../utils/mockData";
+import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../constants/api";
+import Card from "./Card";
+import SearchBar from "./SearchBar";
 import { UploadYoutubePlaylist } from "./YoutubeUpload";
 interface ExtendedInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -17,7 +16,7 @@ interface ExtendedInputProps
 }
 export interface CourseGET {
   author: string;
-  course_id: string;
+  id: string;
   name: string;
   path: string;
 }
@@ -157,16 +156,16 @@ const HomePage = () => {
             <div className="w-full grid grid-cols-3 pt-5 h-full place-content-between auto-rows-fr gap-5">
               {courses?.map((data) => (
                 <div
-                  key={data?.course_id}
+                  key={data?.id}
                   onClick={() =>
-                    router.push(`/video?course_id=${data?.course_id}`)
+                    router.push(`/video?course_id=${data?.id}`)
                   }
                   className="h-full"
                 >
                   <Card
                     name={data?.name}
                     author={data?.author}
-                    id={data?.course_id}
+                    id={data?.id}
                     updateCourses={fetchCourses}
                   />
                 </div>

@@ -50,35 +50,65 @@ class CrudController:
         course_db = TinyDB(course_db_path)
         course_json = jsonable_encoder(course)
         course_db.insert(course_json)
-        self.userDB.insert({
-            'course_id': course.id,
-            'path': course.path,
-            'name': course.name,
-            'author': course.author,
-        })
+        courses = self.userDB.search(Query().courses.exists())
+        if not courses:
+            self.userDB.insert({'courses': [{'course_id': course.id, 'path': course.path, 'name': course.name, 'author': course.author}]})
+        else:
+            courses[0]['courses'].append({'course_id': course.id, 'path': course.path, 'name': course.name, 'author': course.author})
+            self.userDB.truncate()
+            self.userDB.insert(courses[0])
         deskLogger.info(f"Course added with id {course.id}")
         return course
 
     def get_all_courses(self):
         deskLogger.info("Getting all courses")
-        return self.userDB.all()
+        courseQ = Query().courses.exists()
+        if not self.userDB.search(courseQ):
+            deskLogger.error(f"Couldn't find any courses")
+            raise NotFoundError(f"Couldn't find any courses")
+        else:
+            courses = self.userDB.search(courseQ)
+            deskLogger.info(f"Courses: {courses}")
+            courses = courses[0]['courses']
+            course_list = []
+            for course in courses:
+                deskLogger.info(f"Course: {course}")
+                path = Path(course['path'])
+                if not path.exists():
+                    deskLogger.error(f"Couldn't find the course at {path} for course id {course['course_id']}")
+                    raise NotFoundError(f"Couldn't find the course at {path} for course id {course['course_id']}")
+                course_info_path = path / '.desk' / 'info.json'
+                course_db = TinyDB(course_info_path)
+                course_json = jsonable_encoder(course_db.all())
+                course_list.append(course_json[0])
+            deskLogger.info(f"Found all courses")
+            return course_list
+    
+
     
     def get_course_by_id(self, id: str):
-        courseQ = Query()
-        course_info = self.userDB.get(courseQ.course_id == id)
-        if course_info is not None:
-            path = Path(course_info['path'])
-            if not path.exists():
-                deskLogger.error(f"Couldn't find the course at {path} for course id {id}")
-                raise NotFoundError(f"Couldn't find the course at {path} for course id {id}")
-            course_info_path = path / '.desk' / 'info.json'
-            course_db = TinyDB(course_info_path)
-            course_json = jsonable_encoder(course_db.all())
-            deskLogger.info(f"Course found with id {id}")
-            return course_json
+        deskLogger.info(f"Getting course with id {id}")
+        courseQ = Query().courses.exists()
+        if not self.userDB.search(courseQ):
+            deskLogger.error(f"Couldn't find any courses")
+            raise NotFoundError(f"Couldn't find any courses")
         else:
-            deskLogger.error(f"Couldn't find the course with id {id}")
-            raise NotFoundError(f"Couldn't find the course with id {id}")
+            deskLogger.info(f"Getting course with id {id}")
+            courses = self.userDB.search(courseQ)
+            deskLogger.info(f"Courses: {courses}")
+            courses = courses[0]['courses']
+            for course in courses:
+                deskLogger.info(f"Course: {course}")
+                if course['course_id'] == id:
+                    path = Path(course['path'])
+                    if not path.exists():
+                        deskLogger.error(f"Couldn't find the course at {path} for course id {id}")
+                        raise NotFoundError(f"Couldn't find the course at {path} for course id {id}")
+                    course_info_path = path / '.desk' / 'info.json'
+                    course_db = TinyDB(course_info_path)
+                    course_json = jsonable_encoder(course_db.all())
+                    deskLogger.info(f"Course found with id {id}")
+                    return course_json
         
     def exists(self,course_path: str) -> bool :
         courseQ = Query()
@@ -86,20 +116,29 @@ class CrudController:
 
 
     def delete_course_by_id(self, id: str):
-        courseQ = Query()
-        course_info = self.userDB.get(courseQ.course_id == id)
-        if course_info is not None:
-            deskLogger.info(f"Deleting course with id {id}")
-            path = Path(course_info['path'])
-            if not path.exists():
-                deskLogger.error(f"Couldn't find the course at {path} for course id {id}")
-                raise NotFoundError(f"Couldn't find the course at {path} for course id {id}")
-            course_info_path = path / '.desk' / 'info.json'
-            course_db = TinyDB(course_info_path)
-            course_db.truncate()
-            self.userDB.remove(courseQ.course_id == id)
-            deskLogger.info(f"Course deleted with id {id}")
+        courseQ = Query().courses
+        courses = self.userDB.search(courseQ.exists())
+        if not courses:
+            deskLogger.error(f"Couldn't find any courses")
+            raise NotFoundError(f"Couldn't find any courses")
         else:
+            deskLogger.info(f"Getting course with id {id}")
+            courses = courses[0]['courses']
+            for course in courses:
+                deskLogger.info(f"Course: {course}")
+                if course['course_id'] == id:
+                    path = Path(course['path'])
+                    if not path.exists():
+                        deskLogger.error(f"Couldn't find the course at {path} for course id {id}")
+                        raise NotFoundError(f"Couldn't find the course at {path} for course id {id}")
+                    course_info_path = path / '.desk' / 'info.json'
+                    course_db = TinyDB(course_info_path)
+                    course_db.truncate()
+                    courses.remove(course)
+                    self.userDB.truncate()
+                    self.userDB.insert({'courses': courses})
+                    deskLogger.info(f"Course deleted with id {id}")
+                    return
             deskLogger.error(f"Couldn't find the course with id {id}")
             raise NotFoundError(f"Couldn't find the course with id {id}")
         
