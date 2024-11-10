@@ -96,7 +96,8 @@ class FileController:
                         path=str(file),
                         name=file.name,
                         type=file_type,
-                        video_duration = get_video_duration(str(file))
+                        video_duration = get_video_duration(str(file)),
+                        is_complete=False,
                     )
                     folder_dict["children"].append(lesson.dict())
 
